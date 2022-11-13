@@ -32,9 +32,6 @@ while activeStatus:
             print("Tiger out")
             activeStatus = False
 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            print(event.button)
-
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
                 dpY = -2
