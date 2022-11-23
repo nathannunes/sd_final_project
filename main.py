@@ -1,4 +1,5 @@
 import pygame
+import random
 
 # Initialize
 pygame.init()
@@ -19,8 +20,18 @@ pY = 480
 dpX = 0
 dpY = 0
 
+# For the
+enemyImg = pygame.image.load('resources/devil.png')
+eX = 370
+eY = 180
+deX = 0
+deY = 0
+
 def player(x,y):
-    screen.blit(playerImg,(x,y))
+    screen.blit(playerImg, (x, y))
+
+def enemy():
+    screen.blit(enemyImg, (eX, eY))
 
 # Loop to Game
 while activeStatus:
@@ -45,10 +56,11 @@ while activeStatus:
             if event.key in (pygame.K_w, pygame.K_s):
                 dpY = 0
             if event.key in (pygame.K_a, pygame.K_d):
-                dpX =0
+                dpX = 0
 
     # update player coordinates
-    pX = 736 if (pX + dpX) >= 736 else (0 if (pX+dpX)<=0 else (pX+dpX))
-    pY = 536 if (pY + dpY) >= 536 else (0 if (pY+dpY)<=0 else (pY+dpY))
-    player(pX,pY)
+    pX = 736 if (pX + dpX) >= 736 else (0 if (pX+dpX) <= 0 else (pX+dpX))
+    pY = 536 if (pY + dpY) >= 536 else (268 if (pY+dpY) <= 268 else (pY+dpY))
+    player(pX, pY)
+    enemy()
     pygame.display.update()
