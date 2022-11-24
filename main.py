@@ -8,8 +8,10 @@ pygame.init()
 screen = pygame.display.set_mode((800, 600))
 activeStatus = True
 
+bgImage = pygame.image.load('resources/bg.png')
+
 # Game Title and Icon
-pygame.display.set_caption('The Haunting at Clemson University')
+pygame.display.set_caption('A Haunting at Clemson University')
 icon = pygame.image.load('resources/ghost.png')
 pygame.display.set_icon(icon)
 
@@ -22,22 +24,23 @@ dpY = 0
 
 # For the
 enemyImg = pygame.image.load('resources/devil.png')
-eX = 370
-eY = 180
-deX = 0
-deY = 0
+eX = random.randrange(0, 736, 10)
+eY = random.randrange(0, 268, 10)
+deX = 2
+deY = 3
 
 def player(x,y):
     screen.blit(playerImg, (x, y))
 
-def enemy():
+def enemy(eX,eY):
     screen.blit(enemyImg, (eX, eY))
 
 # Loop to Game
 while activeStatus:
     # Set RGB values
-    #screen.fill((59, 26, 2))
     screen.fill((0, 0, 0))
+    #bg image
+    screen.blit(bgImage, (0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             print("Tiger out")
@@ -60,7 +63,20 @@ while activeStatus:
 
     # update player coordinates
     pX = 736 if (pX + dpX) >= 736 else (0 if (pX+dpX) <= 0 else (pX+dpX))
-    pY = 536 if (pY + dpY) >= 536 else (268 if (pY+dpY) <= 268 else (pY+dpY))
+    pY = 536 if (pY + dpY) >= 536 else (260 if (pY+dpY) <= 260 else (pY+dpY))
+
+    eX += deX
+    eY += deY
+    if eX <=0:
+        deX = 2
+    elif eX >= 736:
+        deX = -2
+
+    if eY <=0:
+        deY = 3
+    elif eY >= 268:
+        deY = -2
+
     player(pX, pY)
-    enemy()
+    enemy(eX, eY)
     pygame.display.update()
