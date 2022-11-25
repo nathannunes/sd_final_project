@@ -25,11 +25,19 @@ dpX = 0
 dpY = 0
 
 # For the enemy
-enemyImg = pygame.image.load('resources/devil.png')
-eX = random.randrange(0, 736, 10)
-eY = random.randrange(0, 268, 10)
-deX = 2
-deY = 3
+enemyImg = []
+eX = []
+eY = []
+deX = []
+deY = []
+num_of_enemies = 5
+
+for i in range(num_of_enemies):
+    enemyImg.append(pygame.image.load('resources/devil.png'))
+    eX.append(random.randrange(0, 736, 10))
+    eY.append(random.randrange(0, 268, 10))
+    deX.append(2)
+    deY.append(3)
 
 # For the flame
 flameImg = pygame.image.load('resources/flames.png')
@@ -46,8 +54,8 @@ def player(x, y):
     screen.blit(playerImg, (x, y))
 
 
-def enemy(eX, eY):
-    screen.blit(enemyImg, (eX, eY))
+def enemy(eX, eY, i):
+    screen.blit(enemyImg[i], (eX, eY))
 
 
 def fire_attack(x, y):
@@ -87,6 +95,7 @@ while activeStatus:
             if event.key == pygame.K_SPACE:
                 if flameState == "ready":
                     fX = pX
+                    fY = pY
                     fire_attack(fX, fY)
         if event.type == pygame.KEYUP:
             if event.key in (pygame.K_w, pygame.K_s):
@@ -98,17 +107,30 @@ while activeStatus:
     pX = 736 if (pX + dpX) >= 736 else (0 if (pX + dpX) <= 0 else (pX + dpX))
     pY = 536 if (pY + dpY) >= 536 else (260 if (pY + dpY) <= 260 else (pY + dpY))
 
-    eX += deX
-    eY += deY
-    if eX <= 0:
-        deX = 2
-    elif eX >= 736:
-        deX = -2
+    for i in range(num_of_enemies):
+        eX[i] += deX[i]
+        eY[i] += deY[i]
+        if eX[i] <= 0:
+            deX[i] = 2
+        elif eX[i] >= 736:
+            deX[i] = -2
 
-    if eY <= 0:
-        deY = 3
-    elif eY >= 536:
-        deY = -2
+        if eY[i] <= 0:
+            deY[i] = 3
+        elif eY[i] >= 536:
+            deY[i] = -2
+
+        # for Collision
+        collision = hasCollided(eX[i], eY[i], fX, fY)
+        if collision:
+            eX[i] = random.randrange(0, 736, 10)
+            eY[i] = random.randrange(0, 268, 10)
+            fY = pY
+            flameState = "ready"
+            score += 1
+            print(score)
+
+        enemy(eX[i], eY[i], i)
 
     # persist flame
     if fY <= 0:
@@ -119,17 +141,9 @@ while activeStatus:
         fire_attack(fX, fY)
         fY -= dfY
 
-    # for Collision
-    collision = hasCollided(eX, eY, fX, fY)
-    if collision:
-        eX = random.randrange(0, 736, 10)
-        eY = random.randrange(0, 268, 10)
-        fY = 480
-        flameState = "ready"
-        score += 1
-        print(score)
+
 
 
     player(pX, pY)
-    enemy(eX, eY)
+
     pygame.display.update()
