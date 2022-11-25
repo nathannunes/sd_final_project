@@ -1,3 +1,5 @@
+import math
+
 import pygame
 import random
 
@@ -22,24 +24,51 @@ pY = 480
 dpX = 0
 dpY = 0
 
-# For the
+# For the enemy
 enemyImg = pygame.image.load('resources/devil.png')
 eX = random.randrange(0, 736, 10)
 eY = random.randrange(0, 268, 10)
 deX = 2
 deY = 3
 
-def player(x,y):
+# For the flame
+flameImg = pygame.image.load('resources/flames.png')
+fX = 0
+fY = 480
+dfX = 2
+dfY = 5
+flameState = "ready"
+
+score = 0
+
+
+def player(x, y):
     screen.blit(playerImg, (x, y))
 
-def enemy(eX,eY):
+
+def enemy(eX, eY):
     screen.blit(enemyImg, (eX, eY))
+
+
+def fire_attack(x, y):
+    global flameState
+    flameState = "fire"
+    screen.blit(flameImg, (x + 16, y + 10))
+
+
+def hasCollided(eX, eY, fX, fY):
+    dist = math.sqrt(math.pow(eX-fX, 2) + math.pow(eY-fY, 2))
+    if dist < 20:
+        return True
+    else:
+        return False
 
 # Loop to Game
 while activeStatus:
+
     # Set RGB values
     screen.fill((0, 0, 0))
-    #bg image
+    # bg image
     screen.blit(bgImage, (0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -48,13 +77,17 @@ while activeStatus:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:
-                dpY = -2
+                dpY = -5
             if event.key == pygame.K_s:
-                dpY = 2
+                dpY = 5
             if event.key == pygame.K_d:
-                dpX = 2
+                dpX = 5
             if event.key == pygame.K_a:
-                dpX = -2
+                dpX = -5
+            if event.key == pygame.K_SPACE:
+                if flameState == "ready":
+                    fX = pX
+                    fire_attack(fX, fY)
         if event.type == pygame.KEYUP:
             if event.key in (pygame.K_w, pygame.K_s):
                 dpY = 0
@@ -62,20 +95,40 @@ while activeStatus:
                 dpX = 0
 
     # update player coordinates
-    pX = 736 if (pX + dpX) >= 736 else (0 if (pX+dpX) <= 0 else (pX+dpX))
-    pY = 536 if (pY + dpY) >= 536 else (260 if (pY+dpY) <= 260 else (pY+dpY))
+    pX = 736 if (pX + dpX) >= 736 else (0 if (pX + dpX) <= 0 else (pX + dpX))
+    pY = 536 if (pY + dpY) >= 536 else (260 if (pY + dpY) <= 260 else (pY + dpY))
 
     eX += deX
     eY += deY
-    if eX <=0:
+    if eX <= 0:
         deX = 2
     elif eX >= 736:
         deX = -2
 
-    if eY <=0:
+    if eY <= 0:
         deY = 3
-    elif eY >= 268:
+    elif eY >= 536:
         deY = -2
+
+    # persist flame
+    if fY <= 0:
+        fY = 480
+        flameState = "ready"
+
+    if flameState == "fire":
+        fire_attack(fX, fY)
+        fY -= dfY
+
+    # for Collision
+    collision = hasCollided(eX, eY, fX, fY)
+    if collision:
+        eX = random.randrange(0, 736, 10)
+        eY = random.randrange(0, 268, 10)
+        fY = 480
+        flameState = "ready"
+        score += 1
+        print(score)
+
 
     player(pX, pY)
     enemy(eX, eY)
