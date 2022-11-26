@@ -17,7 +17,6 @@ bgImage = pygame.image.load('resources/bg.png')
 mixer.music.load('resources/bg-music.mp3')
 mixer.music.play(-1)
 
-
 # Game Title and Icon
 pygame.display.set_caption('A Haunting at Clemson University')
 icon = pygame.image.load('resources/ghost.png')
@@ -55,11 +54,20 @@ dfX = 2
 dfY = 5
 flameState = "ready"
 
-#Score count
+# Score count
 score_value = 0
 font = pygame.font.Font('freesansbold.ttf', 32)
 textX = 10
 textY = 10
+
+over_font = pygame.font.Font('freesansbold.ttf', 64)
+
+game_over = pygame.image.load('resources/game-over.png')
+
+
+def game_over_text():
+    screen.blit(game_over, (290, 150))
+
 
 def showScore(x, y):
     score = font.render("Score : " + str(score_value), True, (255, 0, 255))
@@ -81,11 +89,27 @@ def fire_attack(x, y):
 
 
 def hasCollided(eX, eY, fX, fY):
-    dist = math.sqrt(math.pow(eX-fX, 2) + math.pow(eY-fY, 2))
+    dist = math.sqrt(math.pow(eX - fX, 2) + math.pow(eY - fY, 2))
     if dist < 20:
+        collisionSound = mixer.Sound("resources/explosion.mp3")
+        collisionSound.play()
         return True
     else:
         return False
+
+
+def hasHitPlayer(eX, eY, pX, pY):
+    dist = math.sqrt(math.pow(eX - pX, 2) + math.pow(eY - pY, 2))
+    global playerState
+    playerState = "not dead"
+    if dist < 35:
+        playerState = "dead"
+        coSound = mixer.Sound("resources/explosion.mp3")
+        coSound.play()
+        return True
+    else:
+        return False
+
 
 # Loop to Game
 while activeStatus:
@@ -110,6 +134,8 @@ while activeStatus:
                 dpX = -5
             if event.key == pygame.K_SPACE:
                 if flameState == "ready":
+                    fireSound = mixer.Sound("resources/fire.mp3")
+                    fireSound.play()
                     fX = pX
                     fY = pY
                     fire_attack(fX, fY)
@@ -124,6 +150,14 @@ while activeStatus:
     pY = 536 if (pY + dpY) >= 536 else (260 if (pY + dpY) <= 260 else (pY + dpY))
 
     for i in range(num_of_enemies):
+        # Game Over
+        hit = hasHitPlayer(eX[i], eY[i], pX, pY)
+        if hit or eY[i] > 1000:
+            for j in range(num_of_enemies):
+                eY[j] = 2000
+            playerState = 'dead'
+            break
+
         eX[i] += deX[i]
         eY[i] += deY[i]
         if eX[i] <= 0:
@@ -147,6 +181,9 @@ while activeStatus:
 
         enemy(eX[i], eY[i], i)
 
+    if (playerState == "dead"):
+        game_over_text()
+
     # persist flame
     if fY <= 0:
         fY = 480
@@ -155,9 +192,6 @@ while activeStatus:
     if flameState == "fire":
         fire_attack(fX, fY)
         fY -= dfY
-
-
-
 
     player(pX, pY)
     showScore(textX, textY)
