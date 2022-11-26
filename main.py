@@ -2,6 +2,7 @@ import math
 
 import pygame
 import random
+from pygame import mixer
 
 # Initialize
 pygame.init()
@@ -11,6 +12,11 @@ screen = pygame.display.set_mode((800, 600))
 activeStatus = True
 
 bgImage = pygame.image.load('resources/bg.png')
+
+# bg Sound
+mixer.music.load('resources/bg-music.mp3')
+mixer.music.play(-1)
+
 
 # Game Title and Icon
 pygame.display.set_caption('A Haunting at Clemson University')
@@ -30,7 +36,9 @@ eX = []
 eY = []
 deX = []
 deY = []
-num_of_enemies = 5
+
+# change for difficulty
+num_of_enemies = 1
 
 for i in range(num_of_enemies):
     enemyImg.append(pygame.image.load('resources/devil.png'))
@@ -54,7 +62,7 @@ textX = 10
 textY = 10
 
 def showScore(x, y):
-    score = font.render("Score : " + str(score_value), True, (255, 255, 255))
+    score = font.render("Score : " + str(score_value), True, (255, 0, 255))
     screen.blit(score, (x, y))
 
 
