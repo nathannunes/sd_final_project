@@ -47,7 +47,15 @@ dfX = 2
 dfY = 5
 flameState = "ready"
 
-score = 0
+#Score count
+score_value = 0
+font = pygame.font.Font('freesansbold.ttf', 32)
+textX = 10
+textY = 10
+
+def showScore(x, y):
+    score = font.render("Score : " + str(score_value), True, (255, 255, 255))
+    screen.blit(score, (x, y))
 
 
 def player(x, y):
@@ -127,8 +135,7 @@ while activeStatus:
             eY[i] = random.randrange(0, 268, 10)
             fY = pY
             flameState = "ready"
-            score += 1
-            print(score)
+            score_value += 1
 
         enemy(eX[i], eY[i], i)
 
@@ -145,5 +152,5 @@ while activeStatus:
 
 
     player(pX, pY)
-
+    showScore(textX, textY)
     pygame.display.update()
