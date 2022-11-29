@@ -1,11 +1,14 @@
 import math
+import os
 from player import Player
 import pygame
 import random
 import enemy
 from pygame import mixer
 from flame import Flame
-if __name__ == "__main__":
+
+
+def main():
     # Initialize
     pygame.init()
 
@@ -13,7 +16,7 @@ if __name__ == "__main__":
     screen = pygame.display.set_mode((800, 600))
     activeStatus = True
 
-    bgImage = pygame.image.load('resources/bg.png')
+    bgImage = pygame.image.load('resources/bg.png').convert()
 
     # bg Sound
     mixer.music.load('resources/bg-music.mp3')
@@ -21,7 +24,7 @@ if __name__ == "__main__":
 
     # Game Title and Icon
     pygame.display.set_caption('A Haunting at Clemson University')
-    icon = pygame.image.load('resources/ghost.png')
+    icon = pygame.image.load('resources/ghost.png').convert()
     pygame.display.set_icon(icon)
 
     # For the player
@@ -29,7 +32,7 @@ if __name__ == "__main__":
 
     # For the enemy
     producer = enemy.FactoryProducer()
-    newEnemy = random.choice(["devil","ghost","joker","vampire"])
+    newEnemy = random.choice(["devil", "ghost", "joker", "vampire"])
     factory = producer.get_factory(newEnemy)
     enemyPlayer = factory.create_enemy(newEnemy)
 
@@ -67,6 +70,7 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 print("Tiger out")
                 activeStatus = False
+                pygame.quit()
 
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
@@ -77,13 +81,15 @@ if __name__ == "__main__":
                     player.dpX = 5
                 if event.key == pygame.K_a:
                     player.dpX = -5
+                if event.key == pygame.K_r and player.playerState == "dead":
+                    main()
                 if event.key == pygame.K_SPACE:
                     if flame.flameState == "ready":
                         fireSound = mixer.Sound("resources/fire.mp3")
                         fireSound.play()
                         flame.fX = player.pX
                         flame.fY = player.pY
-                        flame.fire_attack(screen,flame.fX, flame.fY)
+                        flame.fire_attack(screen, flame.fX, flame.fY)
             if event.type == pygame.KEYUP:
                 if event.key in (pygame.K_w, pygame.K_s):
                     player.dpY = 0
@@ -91,14 +97,16 @@ if __name__ == "__main__":
                     player.dpX = 0
 
         # update player coordinates
-        player.pX = 736 if (player.pX + player.dpX) >= 736 else (0 if (player.pX + player.dpX) <= 0 else (player.pX + player.dpX))
-        player.pY = 536 if (player.pY + player.dpY) >= 536 else (260 if (player.pY + player.dpY) <= 260 else (player.pY + player.dpY))
+        player.pX = 736 if (player.pX + player.dpX) >= 736 else (
+            0 if (player.pX + player.dpX) <= 0 else (player.pX + player.dpX))
+        player.pY = 536 if (player.pY + player.dpY) >= 536 else (
+            260 if (player.pY + player.dpY) <= 260 else (player.pY + player.dpY))
 
         if player.playerState == "not dead":
-            hit = player.hasHitPlayer(enemyPlayer.eX,enemyPlayer.eY,player.pX,player.pY)
+            hit = player.hasHitPlayer(enemyPlayer.eX, enemyPlayer.eY, player.pX, player.pY)
             if hit:
                 enemyPlayer.eY = 2000
-                player.playerState="dead"
+                player.playerState = "dead"
 
             enemyPlayer.eX += enemyPlayer.deX
             enemyPlayer.eY += enemyPlayer.deY
@@ -112,14 +120,13 @@ if __name__ == "__main__":
             elif enemyPlayer.eY >= 536:
                 enemyPlayer.deY = -2
 
-
             # for Collision
             collision = enemyPlayer.hasCollided(flame.fX, flame.fY)
             if collision:
                 enemyPlayer.eX = random.randrange(0, 736, 10)
                 enemyPlayer.eY = random.randrange(0, 268, 10)
                 producer = enemy.FactoryProducer()
-                newEnemy = random.choice(["devil","ghost","joker","vampire"])
+                newEnemy = random.choice(["devil", "ghost", "joker", "vampire"])
                 factory = producer.get_factory(newEnemy)
                 enemyPlayer = factory.create_enemy(newEnemy)
                 flame.flameState = "ready"
@@ -133,10 +140,18 @@ if __name__ == "__main__":
             flame.flameState = "ready"
 
         if flame.flameState == "fire":
-            flame.fire_attack(screen,flame.fX, flame.fY)
+            flame.fire_attack(screen, flame.fX, flame.fY)
             flame.fY -= flame.dfY
 
         player.playerDisplay(screen)
         showScore(textX, textY)
         enemyPlayer.enemyDisplay(screen)
         pygame.display.update()
+
+
+if __name__ == "__main__":
+    try:
+        os.system('pip install pygame --upgrade')
+    except:
+        print("pygame upgrade not needed")
+    main()
