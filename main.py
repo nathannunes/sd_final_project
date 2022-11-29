@@ -43,11 +43,14 @@ if __name__ == "__main__":
     textY = 10
 
     over_font = pygame.font.Font('freesansbold.ttf', 64)
+    restart_game_font = pygame.font.Font('freesansbold.ttf', 20)
 
     game_over = pygame.image.load('resources/game-over.png')
 
     def game_over_text():
         screen.blit(game_over, (290, 150))
+        restart_text = restart_game_font.render("Press R to restart", True, (255, 0, 255))
+        screen.blit(restart_text, (335, 400))
 
     def showScore(x, y):
         score = font.render("Score : " + str(score_value), True, (255, 0, 255))
