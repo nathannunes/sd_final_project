@@ -1,4 +1,3 @@
-import math
 import os
 from player import Player
 import pygame
@@ -152,6 +151,6 @@ def main():
 if __name__ == "__main__":
     try:
         os.system('pip install pygame --upgrade')
-    except:
+    finally:
         print("pygame upgrade not needed")
     main()

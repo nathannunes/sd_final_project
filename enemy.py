@@ -107,6 +107,7 @@ class Vampire(Enemy):
         if dist < 20:
             collisionSound = mixer.Sound("resources/explosion.mp3")
             collisionSound.play()
+
             return True
         else:
             return False
