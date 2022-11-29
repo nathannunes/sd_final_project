@@ -5,7 +5,8 @@ import random
 import enemy
 from pygame import mixer
 from flame import Flame
-if __name__ == "__main__":
+
+def main():
     # Initialize
     pygame.init()
 
@@ -42,12 +43,14 @@ if __name__ == "__main__":
     textX = 10
     textY = 10
 
-    over_font = pygame.font.Font('freesansbold.ttf', 64)
 
     game_over = pygame.image.load('resources/game-over.png')
 
+    restart_game_font = pygame.font.Font('freesansbold.ttf', 20)
     def game_over_text():
         screen.blit(game_over, (290, 150))
+        restart_text = restart_game_font.render("Press R to restart", True, (255, 0, 255))
+        screen.blit(restart_text, (335, 400))
 
     def showScore(x, y):
         score = font.render("Score : " + str(score_value), True, (255, 0, 255))
@@ -64,7 +67,7 @@ if __name__ == "__main__":
             if event.type == pygame.QUIT:
                 print("Tiger out")
                 activeStatus = False
-
+                pygame.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
                     player.dpY = -5
@@ -74,6 +77,8 @@ if __name__ == "__main__":
                     player.dpX = 5
                 if event.key == pygame.K_a:
                     player.dpX = -5
+                if event.key == pygame.K_r and player.playerState == "dead":
+                    main()
                 if event.key == pygame.K_SPACE:
                     if flame.flameState == "ready":
                         fireSound = mixer.Sound("resources/fire.mp3")
@@ -122,8 +127,10 @@ if __name__ == "__main__":
                 flame.flameState = "ready"
                 score_value += 1
 
-        if (player.playerState == "dead"):
+        if player.playerState == "dead":
             game_over_text()
+
+
         # persist flame
         if flame.fY <= 0:
             flame.fY = 480
@@ -137,3 +144,6 @@ if __name__ == "__main__":
         showScore(textX, textY)
         enemyPlayer.enemyDisplay(screen)
         pygame.display.update()
+
+if __name__ == "__main__":
+    main()
