@@ -35,7 +35,7 @@ class Enemy(ABC):
 
 class Devil(Enemy):
     def __init__(self):
-        self.enemyImg = pygame.image.load('resources/devil.png').convert()
+        self.enemyImg = pygame.image.load('resources/devil.png')
         self.eX = random.randrange(0, 736, 10)
         self.eY = random.randrange(0, 268, 10)
         self.deX = 2
@@ -74,7 +74,7 @@ class Ghost(Enemy):
     
 class Joker(Enemy):
     def __init__(self):
-        self.enemyImg = pygame.image.load('resources/scared.png').convert()
+        self.enemyImg = pygame.image.load('resources/scared.png')
         self.eX = random.randrange(0, 736, 10)
         self.eY = random.randrange(0, 268, 10)
         self.deX = 2
@@ -93,7 +93,7 @@ class Joker(Enemy):
     
 class Vampire(Enemy):
     def __init__(self):
-        self.enemyImg = pygame.image.load('resources/vampire.png').convert()
+        self.enemyImg = pygame.image.load('resources/vampire.png')
         self.eX = random.randrange(0, 736, 10)
         self.eY = random.randrange(0, 268, 10)
         self.deX = 2

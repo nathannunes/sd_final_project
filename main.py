@@ -15,7 +15,7 @@ def main():
     screen = pygame.display.set_mode((800, 600))
     activeStatus = True
 
-    bgImage = pygame.image.load('resources/bg.png').convert()
+    bgImage = pygame.image.load('resources/bg.png')
 
     # bg Sound
     mixer.music.load('resources/bg-music.mp3')
@@ -23,7 +23,7 @@ def main():
 
     # Game Title and Icon
     pygame.display.set_caption('A Haunting at Clemson University')
-    icon = pygame.image.load('resources/ghost.png').convert()
+    icon = pygame.image.load('resources/ghost.png')
     pygame.display.set_icon(icon)
 
     # For the player
